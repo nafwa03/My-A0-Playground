@@ -9,4 +9,5 @@ Setting UP A Data Pipeline to test conversation generation and to generate QA pa
 
 ##WHAT YOU NEED
   Data. You can use Huggingface or Kaggle public datasets or you can generate your own synthetically to fine-tune.
-  I am using <link>https://github.com/meta-llama/synthetic-data-kit</link>
+  I am using Meta Synthetic Data Kit: https://github.com/meta-llama/synthetic-data-kit
+
