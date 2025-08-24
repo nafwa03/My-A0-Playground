@@ -14,7 +14,7 @@ Setting UP A Data Pipeline to test conversation generation and to generate QA pa
 ##Requirements for synthetic data kit
   -Miniconda/conda or pure python
   -Local vLLM like Ollama or LM Studio or Api key for cloud LLM
-  -Developer mode enabled for YAML
+  -Files to extract data
 
 ##WHAT NEXT
   -After installing the synthetic data kit feed it some documents. The instructions are pretty straightforward
