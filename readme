@@ -18,6 +18,19 @@ Setting UP A Data Pipeline to test conversation generation and to generate QA pa
 
 ##WHAT NEXT
   -After installing the synthetic data kit feed it some documents. The instructions are pretty straightforward
+  -Generate a mix of data. To fine-tune a model you should have repeats and atleast 2K data points. BE SURE TO CLEAN ANY PHI!
+  -You need a set of COT and QA which you can even out but the synthetic kit will include both when you curate it if you generated the cot 
+  -Once data is saved, use an unsloth notebook that has already been created but tweaked. This can be done using a T4 free which are usually available over the weekends or after 5pm EST
+  -What you are going to be doing is adding weights to the model of your choosing
+  -Unsloth has some free collab notebooks but you just need to tweak them which I will upload at a later time
+
+##FILES
+  -JSON files are just example outputs feeding various documents to different models. You can play with the prompts in the yaml file to get it to 
+  -config.yaml (just the settings which is using a LM Studio running locally)
+
+##USEFULNESS
+  -This has been very useful in testing how Agent 0 will respond to various scenarios
+  -I am not 100% certain that a custom model is needed unless you want something very specific or if you want to create an adversary for hacking testing
 
 
 
