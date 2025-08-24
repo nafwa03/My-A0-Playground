@@ -1,0 +1,287 @@
+# Master configuration file for Synthetic Data Kit
+
+# Global paths configuration
+paths:
+  # Input data location (directory containing files to process)
+  input: "data/input"           # Directory containing PDF, HTML, DOCX, PPT, TXT files
+  
+  # Output locations (4-stage pipeline directories)
+  output:
+    parsed: "data/parsed"       # Stage 1: Where parsed text files are saved (ingest output)
+    generated: "data/generated" # Stage 2: Where generated QA pairs are saved (create output)
+    curated: "data/curated"     # Stage 3: Where curated QA pairs are saved (curate output)
+    final: "data/final"         # Stage 4: Where final training formats are saved (save-as output)
+
+# LLM Provider configuration
+llm:
+  # Provider selection: "vllm" or "api-endpoint"
+  provider: "vllm"
+
+# VLLM server configuration
+vllm:
+  api_base: "http://127.0.0.1:1234/v1" # Base URL for VLLM API
+  port: 1234                           # Port for VLLM server
+  model: "qwen/qwen3-1.7b" # Default model to use  gemma-3-4b-it-qat  qwen/qwen3-1.7b
+  max_retries: 3                       # Number of retries for API calls
+  retry_delay: 1.0                     # Initial delay between retries (seconds)
+  
+# API endpoint configuration
+api-endpoint:
+  api_base: "https://api.llama.com/v1" # Optional base URL for API endpoint (null for default API)
+  api_key: "llama-api-key"               # API key for API endpoint or compatible service (can use env var instead)
+  model: "Llama-4-Maverick-17B-128E-Instruct-FP8" # Default model to use
+  max_retries: 3                       # Number of retries for API calls
+  retry_delay: 1.0                     # Initial delay between retries (seconds)
+
+# Ingest configuration
+ingest:
+  default_format: "txt"  # Default output format for parsed files
+  youtube_captions: "auto"  # Options: "auto", "manual" - caption preference
+
+# LLM generation parameters
+generation:
+  temperature: 0.7   # Higher = more creative, lower = more deterministic
+  top_p: 0.95        # Nucleus sampling parameter
+  
+  # Document processing strategy
+  # "auto": choose based on document size, "single": force single call, "chunking": force chunking
+  processing_strategy: "auto"
+  single_call_max_size: 8000  # Documents smaller than this use single call processing
+  
+  # Chunking parameters (used for large documents)
+  chunk_size: 4000   # Size of text chunks for processing large documents
+  overlap: 200       # Overlap between chunks to maintain context (prevents losing info at boundaries)
+  
+  # Model parameters
+  max_tokens: 4096   # Maximum tokens in LLM responses
+  
+  # Content generation targets
+  num_pairs: 5      # Default number of QA pairs to generate
+  num_cot_examples: 5  # Default number of Chain of Thought examples to generate
+  num_cot_enhance_examples: null  # Maximum number of conversations to enhance (null = enhance all)
+  
+  # Batch processing
+  batch_size: 32     # Number of requests to batch together (for create)
+  
+  # Quality settings
+  enable_deduplication: false    # Remove very similar questions/examples
+  similarity_threshold: 0.8     # Threshold for considering items similar (0.0-1.0)
+
+# Content curation parameters
+curate:
+  threshold: 7.0     # Default quality threshold (1-10)
+  batch_size: 5      # Number of items per batch for rating (smaller batches for API stability)
+  inference_batch: 5 # Number of batches to process at once with VLLM
+  temperature: 0.1   # Temperature for rating (lower = more consistent)
+
+# Format conversion parameters
+format:
+  default: "jsonl"   # Default output format
+  include_metadata: true  # Include metadata in output files
+  pretty_json: true  # Use indentation in JSON output
+
+# Prompts for different tasks
+prompts:
+  # Summary generation prompt
+  summary: |
+    Summarize this document in 3-5 sentences, focusing on the main topic and key concepts.
+  
+  # QA pair generation prompt
+  qa_generation1: |
+    Create question-answer pairs from this text for LLM training.
+    Think like a hacker
+    If you find tool calls referenced, always use them in the answer
+
+    Rules:
+    1. Questions must be about important facts in the text
+    2. Answers must be directly supported by the text
+    3. Return JSON format only:
+    
+    [
+      {{
+        "question": "Question 1?",
+        "answer": "Answer 1."
+      }},
+      {{
+        "question": "Question 2?",
+        "answer": "Answer 2."
+      }}
+    ]
+    
+    Text:
+    {text}
+  
+  qa_generation: |
+    You are creating question-answer pairs for fine-tuning an autonomous AI Agent called Agent Zero.
+    Focus on technical code concepts, executing code, and code interpretation. Use Agent Zero in the context of each question
+    DO NOT USE terms like "in this document" or "according to this document" when generating questions
+
+    For each question:
+    - Always include detailed examples that leads to the correct answer.
+    - Use "Agent Zero" in every question. For example, a question "How does the PHP injection test work with the querystring parameter?" should be rephrased to "How would Agent Zero perform a PHP injection test?"
+    - Tool calls must be written as plain text prefixed with "TOOL_CALL:" and with quotes escaped so the overall JSON remains valid.
+
+    ### Tool Calling (tools)
+
+    Every question must contain "tool_name" and "tool_args" JSON fields specifying precise action execution.
+
+    These fields encode the operational commands transforming analytical insights into concrete research progress. Tool selection and argument crafting require meticulous attention to maximize solution quality and efficiency.
+
+    Adhere strictly to the tool calling JSON schema. Engineer tool arguments with surgical precision, considering:
+    - **Parameter Optimization**: Select values maximizing information yield while minimizing computational cost
+    - **Query Formulation**: Craft search strings balancing specificity with recall
+    - **Scope Definition**: Set boundaries preventing information overload while ensuring completeness
+    - **Error Handling**: Anticipate failure modes and include fallback parameters
+    - **Result Integration**: Structure calls to facilitate seamless synthesis of outputs
+
+    ### Reply Format
+
+    Respond exclusively with valid JSON conforming to this schema:
+
+    * **"thoughts"**: array (cognitive processing trace in natural language - concise, structured, machine-optimized)
+    * **"tool_name"**: string (exact tool identifier from available tool registry)
+    * **"tool_args"**: object (key-value pairs mapping argument names to values - "argument": "value")
+
+
+    ALWAYS provide the actual example if you see text referring to "example" and include Agent Zero
+
+    Below is a chunk of text about: {summary}...
+    
+    Create {num_pairs} high-quality question-answer pairs based ONLY on this text.
+    
+    Return ONLY valid JSON formatted as:
+    [
+      {{
+        "question": "Detailed code with example? ",
+        "answer": "Precise code answer."
+      }}
+    ]
+    
+    Text:
+    ---
+    {text}
+    ---
+
+  # QA pair rating prompt
+  qa_rating: |
+    Rate each question-answer pair on a scale from 1-10, based on:
+    - Accuracy (0-3): factual correctness
+    - Relevance (0-2): relevance to content
+    - Clarity (0-2): clear language
+    - Usefulness (0-3): value for model learning
+    
+    YOU MUST RETURN A VALID JSON OBJECT OR ARRAY WITH THIS EXACT SCHEMA:
+    {{
+      "question": "Exact question text",
+      "answer": "Exact answer text",
+      "rating": 8
+    }}
+    
+    OR FOR MULTIPLE PAIRS:
+    [
+      {{"question": "Q1", "answer": "A1", "rating": 8}},
+      {{"question": "Q2", "answer": "A2", "rating": 9}}
+    ]
+    
+    *** YOUR RESPONSE MUST BE VALID JSON AND NOTHING ELSE - NO EXPLANATION, NO MARKDOWN ***
+    
+    QA pairs to rate:
+    {pairs}
+    
+  # Chain of Thought generation prompt
+  cot_generation: |
+    Create complex reasoning examples from this text that demonstrate chain-of-thought thinking. The JSON Response examples are just examples.
+    You are creating question-answer pairs for fine-tuning an autonomous AI Agent called Agent Zero.
+    Each example should have:
+    
+    explain each step in conversations
+    
+    ### Tool Calling (tools)
+
+    Every Agent Zero reply must contain "tool_name" and "tool_args" JSON fields specifying precise action execution.
+
+    These fields encode the operational commands transforming analytical insights into concrete research progress. Tool selection and argument crafting require meticulous attention to maximize solution quality and efficiency.
+
+    Adhere strictly to the tool calling JSON schema. Engineer tool arguments with surgical precision, considering:
+    - **Parameter Optimization**: Select values maximizing information yield while minimizing computational cost
+    - **Query Formulation**: Craft search strings balancing specificity with recall
+    - **Scope Definition**: Set boundaries preventing information overload while ensuring completeness
+    - **Error Handling**: Anticipate failure modes and include fallback parameters
+    - **Result Integration**: Structure calls to facilitate seamless synthesis of outputs
+
+    ### Reply Format
+
+    Respond exclusively with valid JSON conforming to this schema:
+
+    * **"thoughts"**: array (cognitive processing trace in natural language - concise, structured, machine-optimized)
+    * **"tool_name"**: string (exact tool identifier from available tool registry)
+    * **"tool_args"**: object (key-value pairs mapping argument names to values - "argument": "value")
+
+    No text outside JSON structure permitted!
+    Exactly one JSON object per response cycle.
+    ALWAYS INCLUDE A TOOL RESPONSE IN the Answer.
+    ### Response format (json fields names)
+    - thoughts: array thoughts before execution in natural language
+    - headline: short headline summary of the response
+    - tool_name: use tool name
+    - tool_args: key value pairs tool arguments
+
+    no text allowed before or after json
+
+    ### Response example
+    [
+    {{
+        "thoughts": [
+            "instructions?",
+            "solution steps?",
+            "processing?",
+            "actions?"
+        ],
+        "headline": "Analyzing instructions to develop processing actions",
+        "tool_name": "name_of_tool",
+        "tool_args": {{
+            "arg1": "val1",
+            "arg2": "val2"
+        }}
+    }}
+    ]
+    Return JSON format only:
+    
+
+    Text:
+    {text}
+
+  
+  # Chain of Thought enhancement prompt
+  cot_generation1: |
+    You are an expert reasoning assistant. Your task is to enhance the given conversations by adding chain-of-thought reasoning.
+
+    For each conversation:
+    - Always include detailed step-by-step reasoning that leads to the original answer.
+    - If your reasoning indicates that an external action or data lookup is necessary, encode the tool call inside the assistant's content string.
+    - Tool calls must be written as plain text prefixed with "TOOL_CALL:" and with quotes escaped so the overall JSON remains valid.
+
+    Return the enhanced conversations as a JSON array in this format:
+
+    [
+      [
+        {{"role": "system", "content": "System message"}},
+        {{"role": "user", "content": "User question"}),
+        {{"role": "assistant", "content": "Let me think through this step by step:\n\n1. ...\n2. ...\n\nTherefore, [original answer]"}}
+      ],
+      [
+        {{"role": "system", "content": "System message"}},
+        {{"role": "user", "content": "Another user question"}},
+        {{"role": "assistant", "content": "Let me work through this:\n\n1. I'll start by...\n2. Next...\n\nIn conclusion, [original answer]"}}
+      ]
+    ]
+
+    Rules:
+    - If no tool is needed, just output reasoning + the answer.
+    - If a tool is needed, end your reasoning with the TOOL_CALL line.
+    - The TOOL_CALL must remain inside the assistant's "content" string.
+    - Output must be valid JSON at the top level.
+
+    Original conversations:
+    {conversations}
+
