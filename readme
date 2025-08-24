@@ -1,0 +1,12 @@
+Setting UP A Data Pipeline to test conversation generation and to generate QA pairs for fine tuning a model
+  I am working on fine-tuning a small model that can run on a 2060 GPU until I get 96GB 5090 MSI
+  I want to do this all free and that is my goal
+  This is all experimental so use at your own risk
+
+###PURPOSE
+  -I want to use small models because I find big models monolithic. Sure you get better results but you can get just as good results with embedding strategies, LoRA and quants
+  -Just posting my learning experience for others who may be looking to do something like this
+
+##WHAT YOU NEED
+  Data. You can use Huggingface or Kaggle public datasets or you can generate your own synthetically to fine-tune.
+  I am using <link>https://github.com/meta-llama/synthetic-data-kit</link>
