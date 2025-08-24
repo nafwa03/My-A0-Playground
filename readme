@@ -25,15 +25,17 @@ Setting UP A Data Pipeline to test conversation generation and to generate QA pa
   -Unsloth has some free collab notebooks but you just need to tweak them which I will upload at a later time
 
 ##FILES
-  -JSON files are just example outputs feeding various documents to different models. You can play with the prompts in the yaml file to get it to 
+  -JSON files are just example outputs feeding various documents to different models. You can play with the prompts in the yaml file to get it to act how you want.
   -config.yaml (just the settings which is using a LM Studio running locally)
 
 ##USEFULNESS
   -This has been very useful in testing how Agent 0 will respond to various scenarios and to check the quality of my data.
+  -When training a model you need good quality data and this makes it fast. You can augment the data by prompting it.
   -I am not 100% certain that a custom model is needed unless you want something very specific or if you want to create an adversary for hacking testing
+  -I feel I have discovered something here though not quite sure what it is yet
 
-##USE CASES
-  -Have Agent Zero run the data pipeline itself?
+##USE CASES. How is this at all related to Agent Zero?
+  Agent Data pipeline in the works
 
 
 
