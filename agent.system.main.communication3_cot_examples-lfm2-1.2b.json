@@ -1,0 +1,106 @@
+{
+  "summary": "```json\n{\n    \"thoughts\": [\n        \"User requests a structured analysis of a research task, including requirements elicitation and analytical pathways.\",\n        \"Must first obtain complete task specifications via a detailed interview process.\",\n        \"Analytical framework will decompose the problem into components, identify key entities and relationships, detect anomalies, and formulate action plans.\",\n        \"Tool selection will be based on the need for precise information retrieval and analysis, potentially using tools like 'response' for structured querying and 'tool_name' for specific analytical functions.\"\n    ],\n    \"headline\": \"Request for Comprehensive Research Analysis\",\n    \"tool_name\": \"analytical_framework\",\n    \"tool_args\": {\n        \"task_details\": {\n            \"type\": \"research_task\",\n            \"requirements\": [\n                \"scope boundaries\",\n                \"depth requirements\",\n                \"output specifications\",\n                \"quality standards\",\n                \"domain constraints\",\n                \"timeline parameters\",\n                \"success metrics\"\n            ],\n            \"interview_process\": true,\n            \"analytical_method\": \"structured interview, response tool iteration\"\n        },\n        \"query\": [\n            \"What are the complete requirements for this research task?\",\n            \"Define scope boundaries (include/exclude).\",\n            \"Specify depth of analysis (executive summary to doctoral-level).\",\n            \"Determine output format (academic paper, brief report, etc.).\",\n            \"Identify key constraints (industry regulations, data privacy).\",\n            \"Set timeline milestones and review cycles.\",\n            \"Define success metrics for research completeness and quality.\"\n        ]\n    }\n}\n``` \n\n\n",
+  "cot_examples": [
+    {
+      "thoughts": "To solve this task, I'll first break down the requirements elicitation process into clear steps, ensuring each aspect of the agent's understanding is systematically addressed. This involves recognizing entities like stakeholders, constraints, and outputs, mapping their relationships, and considering timelines and success metrics.",
+      "answer": {
+        "thoughts": "Step 1: Identify key entities (stakeholders, constraints, outputs). Step 2: Map relationships (who interacts with whom, what constraints apply). Step 3: Define scope, timeline, and success criteria based on stakeholder input.",
+        "tool_name": "response",
+        "tool_args": {
+          "entity_recognition": {
+            "stakeholders": [
+              "researcher",
+              "client",
+              "internal teams"
+            ],
+            "constraints": [
+              "budget",
+              "timeline",
+              "regulations"
+            ],
+            "outputs": [
+              "requirements document"
+            ]
+          },
+          "relationship_mapping": {
+            "interaction_points": [
+              "researcher-stakeholder",
+              "client-agent",
+              "internal-team-agent"
+            ],
+            "dependency_relationships": [
+              "timeline-dependent",
+              "resource-dependent"
+            ]
+          },
+          "temporal_analysis": {
+            "milestones": [
+              "initial_review",
+              "final_approval",
+              "data_gathering"
+            ],
+            "sequence": [
+              "requirements_finalized",
+              "research_plan_created",
+              "data_collection_started"
+            ]
+          },
+          "causal_chains": {
+            "impact_analysis": [
+              "delayed_data",
+              "budget_cuts",
+              "regulatory_change"
+            ],
+            "root_causes": [
+              "insufficient_data",
+              "over_budget",
+              "new_regulations"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "thoughts": "Now, let's focus on using the 'response' tool for each subtask. This ensures we're leveraging its capabilities to efficiently gather and structure the required information.",
+      "answer": {
+        "thoughts": "Subtask 1: Entity Recognition - Extract key information from stakeholder documents and internal notes. Subtask 2: Relationship Mapping - Connect stakeholders, constraints, and outcomes. Subtask 3: Temporal Analysis - Outline project phases and deadlines. Subtask 4: Causal Chain Construction - Identify potential roadblocks based on cause-effect relationships.",
+        "tool_name": "response",
+        "tool_args": {
+          "entity_recognition": {
+            "method": "natural_language_processing",
+            "data_sources": [
+              "stakeholder_reports",
+              "internal_docs"
+            ]
+          },
+          "relationship_mapping": {
+            "tools": [
+              "graph_database"
+            ],
+            "methods": [
+              "dependency_parsing"
+            ]
+          },
+          "temporal_analysis": {
+            "tools": [
+              "time_series_analytics"
+            ],
+            "metrics": [
+              "days_until_milestone",
+              "total_timeline_duration"
+            ]
+          },
+          "causal_chains": {
+            "methods": [
+              "logic_graph",
+              "event_correlation"
+            ]
+          }
+        }
+      }
+    },
+    "First, I must acknowledge the need for precise query formulation as per the user's request for competitive analysis of the enterprise CRM market.",
+    "Next, to ensure comprehensive coverage of all requested aspects, I'll outline the thought process for gathering necessary information."
+  ],
+  "conversations": []
+}

