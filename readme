@@ -29,7 +29,7 @@ Setting UP A Data Pipeline to test conversation generation and to generate QA pa
   -config.yaml (just the settings which is using a LM Studio running locally)
 
 ##USEFULNESS
-  -This has been very useful in testing how Agent 0 will respond to various scenarios
+  -This has been very useful in testing how Agent 0 will respond to various scenarios and to check the quality of my data.
   -I am not 100% certain that a custom model is needed unless you want something very specific or if you want to create an adversary for hacking testing
 
 
